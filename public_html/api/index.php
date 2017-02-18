@@ -35,7 +35,14 @@ $app->get('/{collection}/{key}={value}', function (Request $request, Response $r
   $value = $request->getAttribute('value');
 
   $collection = $db->$whichColl;
-  $cursor = $collection->find([$key => $value]);
+  if ($key == 'id') {
+    $cursor = $collection->find(['_id' => new MongoDB\BSON\ObjectID($value)]);
+  } else if ($key == 'type') {
+    $cursor = $collection->find([$key => $value]);
+  } else {
+    $cursor = $collection->find([$key => $value]);
+  }
+
   foreach ($cursor as $document) {
     $data[] = $document;
   }
